@@ -1,28 +1,45 @@
 import { format, formatDistanceToNow } from 'date-fns'
-import { useState } from 'react'
-import ptBR from 'date-fns/locale/pt-BR'
-
+import { ChangeEvent, FormEvent, useState } from 'react'
 import Avatar from './Avatar'
 import Comment from './Comment'
+import ptBR from 'date-fns/locale/pt-BR'
 import styles from './Post.module.css'
 
-export default function Post({ author, content, publishedAt }) {
+
+interface Author {
+    name: string;
+    role: string;
+    avatarUrl: string;
+}
+
+interface PostProps{
+    author: Author;
+    publishedAt: Date;
+    content: Content[];
+}
+
+interface Content{
+    type: 'paragraph' | 'link';
+    content: string;
+}
+
+export default function Post({ author, content, publishedAt }:PostProps) {
 
     const [comments, setComments] = useState(['Post muito bacana, hein?!'])
 
     const [newComment, setNewComment] = useState('')
 
-    function handleCreateNewComment() {
+    function handleCreateNewComment(event: FormEvent) {
         event.preventDefault();
         setComments([...comments, newComment]);
         setNewComment('')
     }
 
-    function handleNewCommentChange() {
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
         setNewComment(event.target.value);
     }
 
-    function deleteComment(commentToDelete) {
+    function deleteComment(commentToDelete: string) {
         const commentsWithoutDeletedOne = comments.filter((e) => {
             return e !== commentToDelete;
         });
@@ -42,7 +59,7 @@ export default function Post({ author, content, publishedAt }) {
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar hasBorder src="https://github.com/DaviSato.png" />
+                    <Avatar hasBorder src="https://github.com/DaviSato.png" alt=''/>
                     <div className={styles.authorInfo}>
                         <strong>{author.name}</strong>
                         <span>{author.role}</span>
